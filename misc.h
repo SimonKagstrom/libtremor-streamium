@@ -107,12 +107,6 @@ STIN ogg_int32_t MULT31_SHIFT15(ogg_int32_t x, ogg_int32_t y) {
 
 #endif
 
-/*
- * This should be used as a memory barrier, forcing all cached values in
- * registers to wr writen back to memory.  Might or might not be beneficial
- * depending on the architecture and compiler.
- */
-#define MB()
 
 /*
  * The XPROD functions are meant to optimize the cross products found all
@@ -123,12 +117,16 @@ STIN ogg_int32_t MULT31_SHIFT15(ogg_int32_t x, ogg_int32_t y) {
  * compiler actually reload registers directly from original memory by using
  * macros.
  */
+ 
+ /* replaced XPROD32 with a macro to avoid memory reference
+    _x, _y are the results (must be l-values) */
+ #define XPROD32(_a, _b, _t, _v, _x, _y)     \
+   { (_x)=MULT32(_a,_t)+MULT32(_b,_v);       \
+    (_y)=MULT32(_b,_t)-MULT32(_a,_v); }
+
 
 #ifdef __i386__
 
-#define XPROD32(_a, _b, _t, _v, _x, _y)		\
-  { *(_x)=MULT32(_a,_t)+MULT32(_b,_v);		\
-    *(_y)=MULT32(_b,_t)-MULT32(_a,_v); }
 #define XPROD31(_a, _b, _t, _v, _x, _y)		\
   { *(_x)=MULT31(_a,_t)+MULT31(_b,_v);		\
     *(_y)=MULT31(_b,_t)-MULT31(_a,_v); }
@@ -138,13 +136,6 @@ STIN ogg_int32_t MULT31_SHIFT15(ogg_int32_t x, ogg_int32_t y) {
 
 #else
 
-STIN void XPROD32(ogg_int32_t  a, ogg_int32_t  b,
-			   ogg_int32_t  t, ogg_int32_t  v,
-			   ogg_int32_t *x, ogg_int32_t *y)
-{
-  *x = MULT32(a, t) + MULT32(b, v);
-  *y = MULT32(b, t) - MULT32(a, v);
-}
 
 STIN void XPROD31(ogg_int32_t  a, ogg_int32_t  b,
 			   ogg_int32_t  t, ogg_int32_t  v,
@@ -161,6 +152,65 @@ STIN void XNPROD31(ogg_int32_t  a, ogg_int32_t  b,
   *x = MULT31(a, t) - MULT31(b, v);
   *y = MULT31(b, t) + MULT31(a, v);
 }
+
+#endif
+
+#define XPROD31_R(_a, _b, _t, _v, _x, _y)\
+{\
+  _x = MULT31(_a, _t) + MULT31(_b, _v);\
+  _y = MULT31(_b, _t) - MULT31(_a, _v);\
+}
+
+#define XNPROD31_R(_a, _b, _t, _v, _x, _y)\
+{\
+  _x = MULT31(_a, _t) - MULT31(_b, _v);\
+  _y = MULT31(_b, _t) + MULT31(_a, _v);\
+}
+
+
+#ifndef _V_VECT_OPS
+#define _V_VECT_OPS
+
+STIN
+void vect_add(ogg_int32_t *x, ogg_int32_t *y, int n)
+{
+  while (n>0) {
+    *x++ += *y++;
+    n--;
+  }
+}
+
+STIN
+void vect_copy(ogg_int32_t *x, ogg_int32_t *y, int n)
+{
+  while (n>0) {
+    *x++ = *y++;
+    n--;
+  }
+}
+
+STIN
+void vect_mult_fw(ogg_int32_t *data, LOOKUP_T *window, int n)
+{
+  while(n>0) {
+    *data = MULT31(*data, *window);
+    data++;
+    window++;
+    n--;
+  }
+}
+
+STIN
+void vect_mult_bw(ogg_int32_t *data, LOOKUP_T *window, int n)
+{
+  while(n>0) {
+    *data = MULT31(*data, *window);
+    data++;
+    window--;
+    n--;
+  }
+}
+
 
 #endif
 

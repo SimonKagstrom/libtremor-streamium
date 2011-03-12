@@ -293,7 +293,7 @@ static int mapping0_inverse(vorbis_block *vb,vorbis_look_mapping *l){
   /* only MDCT right now.... */
   for(i=0;i<vi->channels;i++){
     ogg_int32_t *pcm=vb->pcm[i];
-    mdct_backward(n,pcm,pcm);
+    ff_imdct_calc(ci->blocksizes_nbits[vb->W], pcm, pcm);
   }
 
   //for(j=0;j<vi->channels;j++)

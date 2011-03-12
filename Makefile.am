@@ -7,7 +7,7 @@ pkgconfig_DATA = vorbisidec.pc
 
 lib_LTLIBRARIES = libvorbisidec.la
 
-libvorbisidec_la_SOURCES = mdct.c block.c window.c \
+libvorbisidec_la_SOURCES = block.c window.c \
                         synthesis.c info.c \
                         floor1.c floor0.c vorbisfile.c \
                         res012.c mapping0.c registry.c codebook.c \
@@ -16,7 +16,10 @@ libvorbisidec_la_SOURCES = mdct.c block.c window.c \
                         os.h mdct.h block.h ivorbisfile.h lsp_lookup.h\
                         registry.h window.h window_lookup.h\
                         codec_internal.h backends.h \
-			asm_arm.h ivorbiscodec.h
+			asm_arm.h ivorbiscodec.h \
+			fft.h fft-ffmpeg_arm.h\
+			fft-ffmpeg.c mdct-ffmpeg.c mdct_lookup.c
+
 libvorbisidec_la_LDFLAGS = -version-info @V_LIB_CURRENT@:@V_LIB_REVISION@:@V_LIB_AGE@
 libvorbisidec_la_LIBADD = @OGG_LIBS@
 

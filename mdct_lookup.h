@@ -17,6 +17,11 @@
   
 #include "misc.h"
 
+extern const ogg_int32_t sincos_lookup0[1026];
+extern const ogg_int32_t sincos_lookup1[1024];
+extern const ogg_uint16_t revtab[1<<12];
+
+#if 0
 /* {sin(2*i*PI/4096), cos(2*i*PI/4096)}, with i = 0 to 512 */
 static const LOOKUP_T sincos_lookup0[1026] = {
   X(0x00000000), X(0x7fffffff), X(0x003243f5), X(0x7ffff621),
@@ -538,3 +543,4 @@ static const LOOKUP_T sincos_lookup1[1024] = {
   X(0x5a4d1960), X(0x5ab7ba6c), X(0x5a70b258), X(0x5a943d5e),
 };
   
+#endif
