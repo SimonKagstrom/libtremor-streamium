@@ -60,8 +60,7 @@ typedef struct codec_setup_info {
   /* Vorbis supports only short and long blocks, but allows the
      encoder to choose the sizes */
 
-  int blocksizes_nbits[2];
-  long blocksizes[2];   /* 1 << blocksizes_nbits */
+  long blocksizes[2];
 
   /* modes are the primary means of supporting on-the-fly different
      blocksizes, different channel mappings (LR or M/A),

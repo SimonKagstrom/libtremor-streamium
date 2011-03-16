@@ -53,8 +53,9 @@ const void *_vorbis_window(int type, int left){
 }
 
 void _vorbis_apply_window(ogg_int32_t *d,const void *window_p[2],
-                          long *blocksizes,
-                          int lW,int W,int nW){
+			  long *blocksizes,
+			  int lW,int W,int nW){
+  
   LOOKUP_T *window[2]={window_p[0],window_p[1]};
   long n=blocksizes[W];
   long ln=blocksizes[lW];
@@ -65,15 +66,18 @@ void _vorbis_apply_window(ogg_int32_t *d,const void *window_p[2],
 
   long rightbegin=n/2+n/4-rn/4;
   long rightend=rightbegin+rn/2;
+  
+  int i,p;
 
-  /* Following memset is not required - we are careful to only overlap/add the
-     regions that geniunely overlap in the window region, and the portions
-     outside that region are not added (so don't need to be zerod). see block.c
-     memset((void *)&d[0], 0, sizeof(ogg_int32_t)*leftbegin); */
+  for(i=0;i<leftbegin;i++)
+    d[i]=0;
 
-  vect_mult_fw(&d[leftbegin], &window[lW][0], leftend-leftbegin);
-  vect_mult_bw(&d[rightbegin], &window[nW][rn/2-1], rightend-rightbegin);
+  for(p=0;i<leftend;i++,p++)
+    d[i]=MULT31(d[i],window[lW][p]);
 
-  /* Again - memset not needed
-     memset((void *)&d[rightend], 0, sizeof(ogg_int32_t)*(n-rightend)); */
+  for(i=rightbegin,p=rn/2-1;i<rightend;i++,p--)
+    d[i]=MULT31(d[i],window[nW][p]);
+
+  for(;i<n;i++)
+    d[i]=0;
 }

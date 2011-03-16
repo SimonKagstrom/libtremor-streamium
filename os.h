@@ -20,10 +20,6 @@
 #include <math.h>
 #include <ogg/os_types.h>
 
-#define ICONST_ATTR
-#define ICODE_ATTR 
-#define LIKELY
-
 #ifndef _V_IFDEFJAIL_H_
 #  define _V_IFDEFJAIL_H_
 
