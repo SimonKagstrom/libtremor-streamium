@@ -48,7 +48,7 @@ cflags_save="$CFLAGS"
 ldflags_save="$LDFLAGS"
 if test -z "$GCC"; then
         case $host in 
-        arm-*-*)
+        arm*-*-*)
                 DEBUG="-g -D_ARM_ASSEM_" 
                 CFLAGS="-O -D_ARM_ASSEM_"
                 PROFILE="-p -g -O -D_ARM_ASSEM_" ;;
@@ -60,7 +60,7 @@ if test -z "$GCC"; then
 else
 
         case $host in 
-        arm-*-*)
+        arm*-*-*)
                 DEBUG="-g -Wall -D__NO_MATH_INLINES -fsigned-char -D_ARM_ASSEM_"
                 CFLAGS="-O2 -D_ARM_ASSEM_ -fsigned-char"
                 PROFILE="-W -pg -g -O2 -D_ARM_ASSEM_ -fsigned-char -fno-inline-functions";;
